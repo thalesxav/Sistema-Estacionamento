@@ -199,7 +199,7 @@ namespace DemoLibrary
             {
                 using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
                 {
-                    var output = cnn.Query<TiposPagamentoModel>("select * from TipoPagamento ORDER BY id ASC", new DynamicParameters());
+                    var output = cnn.Query<TiposPagamentoModel>("select * from TipoPagamento ORDER BY tipo ASC", new DynamicParameters());
                     return output.ToList();
                 }
             }
@@ -242,7 +242,7 @@ namespace DemoLibrary
                 {
                     var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("tipo", tipo);
-                    var output = cnn.Query<TiposPagamentoModel>("select * from TipoPagamento where id = :tipo", dynamicParameters);
+                    var output = cnn.Query<TiposPagamentoModel>("select * from TipoPagamento where tipo = :tipo", dynamicParameters);
                     return output.ToList();
                 }
             }

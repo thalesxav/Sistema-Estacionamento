@@ -261,6 +261,7 @@ namespace WinFormUI
                 _listRegistro = list;
                 btnImprimirSegundaVia.Visible = true;
                 btnRegSaida.Enabled = false;
+                btnRegSaida.ForeColor = Color.Gray;
                 MessageBox.Show("Veículo de Placa '"+txtPlaca.Text+"' não se encontra mais no pátio!");
             }
 
@@ -474,10 +475,11 @@ namespace WinFormUI
                 }
                 else if (list.Count == 1 && list[0].data_saida != DateTime.MinValue)
                 {
-                    MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' já saiu do pátio!");
+                    //MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' já saiu do pátio!");
                     _listRegistro = list;
                     btnImprimirSegundaVia.Visible = true;
                     btnRegSaida.Enabled = false;
+                    btnRegSaida.ForeColor = Color.Gray;
                     PreencheDaodsSaida();
                 }
                 else
@@ -498,6 +500,7 @@ namespace WinFormUI
         {
             btnImprimirSegundaVia.Enabled = false;
             btnRegSaida.Enabled = false;
+            btnRegSaida.ForeColor = Color.Gray;
 
             lbEntrada.Text = "";
             lbSaida.Text = "";

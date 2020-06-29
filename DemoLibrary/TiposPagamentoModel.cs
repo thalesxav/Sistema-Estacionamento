@@ -8,7 +8,7 @@ namespace DemoLibrary
 {
     public class TiposPagamentoModel
     {
-        public int id { get; set; }
+        public int tipo { get; set; }
         public Decimal valor { get; set; }
     }
 }

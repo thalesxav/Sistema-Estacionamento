@@ -54,7 +54,7 @@ namespace WinFormUI
 
                 foreach(TiposPagamentoModel tpPag in list)
                 {
-                    cmbTipo.Items.Add("Tipo " + tpPag.id.ToString() + " - R$ " + tpPag.valor.ToString());
+                    cmbTipo.Items.Add("Tipo " + tpPag.tipo.ToString() + " - R$ " + tpPag.valor.ToString());
                 }
             }
             catch(Exception ex)

@@ -13,6 +13,7 @@ namespace WinFormUI
 {
     public partial class PeopleForm : Form
     {
+        private int linha = 0;
         public PeopleForm()
         {
             InitializeComponent();
@@ -46,7 +47,13 @@ namespace WinFormUI
                     Saída = t.data_saida/*,
                     Diárias = (t.data_saida == DateTime.MinValue ? 0 : (t.data_saida - t.data_entrada).TotalDays),
                     Valor = RetornaValor(t.data_entrada, t.data_saida, t.tipo).ToString()*/
-                }; 
+                };
+
+                //Armazena a linha para seleciona-la após o refresh.
+                if (dataGridView1.CurrentRow != null)
+                    linha = dataGridView1.CurrentRow.Index;
+                else
+                    linha = 0;
 
                 //dataGridView1.BeginEdit();
                 dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Tahoma", 9, FontStyle.Bold);
@@ -59,11 +66,21 @@ namespace WinFormUI
                 dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
                 dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
                 dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-                dataGridView1.CurrentRow.Selected = true;
 
+                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                dataGridView1.MultiSelect = false;
+
+                dataGridView1_CellClick(dataGridView1, new DataGridViewCellEventArgs(0, linha));
+
+                if (dataGridView1.CurrentRow == null)
+                    dataGridView1.CurrentRow.Selected = true;
+                else
+                    dataGridView1.Rows[linha].Selected = true;
 
                 dataGridView1.Refresh();
                 dataGridView1.EndEdit();
+
+                
             }
             catch(Exception ex)
             {
@@ -121,13 +138,13 @@ namespace WinFormUI
         protected void ReturnFuncEntrada()
         {
             CarregaUltimasPlacas();
-            btnSaida.PerformClick();
+            //btnSaida.PerformClick();
         }
 
         protected void ReturnFuncSaida()
         {
             CarregaUltimasPlacas();
-            btnEntrada.PerformClick();
+            //btnEntrada.PerformClick();
         }
 
         private void btnSaida_KeyDown(object sender, KeyEventArgs e)
@@ -175,6 +192,10 @@ namespace WinFormUI
             {
                 btnSaida.PerformClick();
             }
+            else if (keyCode == Keys.F10)
+            {
+                MessageBox.Show("Localizar Placa");
+            }
         }
 
         private void KeyPressCustom(char keyChar)
@@ -186,6 +207,10 @@ namespace WinFormUI
             else if (keyChar == (char)114)
             {
                 btnSaida.PerformClick();
+            }
+            else if (keyChar == (char)121)
+            {
+                MessageBox.Show("Localizar Placa");
             }
         }
 
@@ -216,7 +241,17 @@ namespace WinFormUI
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
+            var placa = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
             dataGridView1.CurrentRow.Selected = true;
+            //MessageBox.Show(placa);
+
+            panel2.Controls.Clear();
+
+            Saida saida = new Saida(ReturnFuncSaida, placa);
+            this.Invoke((MethodInvoker)delegate () {
+                panel2.Controls.Add(saida);
+                saida.Focus();
+            });
         }
 
         private void dataGridView1_KeyDown_1(object sender, KeyEventArgs e)
