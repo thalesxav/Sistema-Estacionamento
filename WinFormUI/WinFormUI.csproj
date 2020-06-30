@@ -103,6 +103,12 @@
     <Compile Include="Consulta.Designer.cs">
       <DependentUpon>Consulta.cs</DependentUpon>
     </Compile>
+    <Compile Include="Localizar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Localizar.Designer.cs">
+      <DependentUpon>Localizar.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entrada.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -134,6 +140,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Consulta.resx">
       <DependentUpon>Consulta.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Localizar.resx">
+      <DependentUpon>Localizar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Entrada.resx">
       <DependentUpon>Entrada.cs</DependentUpon>

@@ -55,6 +55,28 @@ namespace DemoLibrary
             }
         }
 
+        public static List<RegistrosModel> LocalizarPlaca(string text)
+        {
+            try
+            {
+                var query = "Select * from Registros where placa = :placa";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("placa", text);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public static DataTable LeDados2<S, T>(string query) where S : IDbConnection, new()
                                            where T : IDbDataAdapter, IDisposable, new()
         {
@@ -292,7 +314,7 @@ namespace DemoLibrary
                 {
                      var dynamicParameters = new DynamicParameters();
                     dynamicParameters.Add("placa", placa);
-                    var output = cnn.Query<TiposPagamentoModel>("select * from Registros where placa = :placa ORDER BY data_saida DESC LIMIT 1", dynamicParameters);
+                    var output = cnn.Query<TiposPagamentoModel>("select * from Registros where placa = :placa and data_saida is null ORDER BY data_saida DESC LIMIT 1", dynamicParameters);
                     return output.ToList().Count > 0;
                 }
             }
@@ -302,13 +324,13 @@ namespace DemoLibrary
             }
         }
 
-        public static List<RegistrosModel> CarregaPagamento(string text)
+        public static List<RegistrosModel> CarregaPagamento(string id)
         {
              try
-            {
-                var query = "Select * from Registros where placa = :placa";
+             {
+                var query = "Select * from Registros where id = :id";
                 var dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("placa", text);
+                dynamicParameters.Add("id", id);
 
                 using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
                 {
@@ -332,12 +354,34 @@ namespace DemoLibrary
                 {
                     cnn.Execute("Update Registros Set data_saida = @data_saida, total_pagar = @total_pagar, " +
                         "impresso = 1" +
-                        " Where placa = @placa", registro);
+                        " Where id = @id", registro);
                 
                     return true;
                 }
             }
             catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<RegistrosModel> CarregaPagamentoByPlaca(string placa)
+        {
+            try
+            {
+                var query = "Select * from Registros where placa = :placa and data_saida is null";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("placa", placa);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }

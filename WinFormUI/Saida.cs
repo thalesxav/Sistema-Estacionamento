@@ -24,6 +24,7 @@ namespace WinFormUI
         public decimal _valor = 0;
         public bool _confirma = false;
         private string _placa = "";
+        private string _id = "";
 
         public Saida()
         {
@@ -43,9 +44,10 @@ namespace WinFormUI
             txtPlaca.Text = _placa;
         }
 
-        public Saida(FormReturnParams returnFunc, string placa)
+        public Saida(FormReturnParams returnFunc, string id, string placa)
         {
             this._placa = placa;
+            this._id = id;
             InitializeComponent();
             txtPlaca.Size = new System.Drawing.Size(173, 100);
             txtPlaca.Focus();
@@ -87,129 +89,128 @@ namespace WinFormUI
                 DataTable dTable = new DataTable();
                 dTable.Columns.Add(new DataColumn("Coluna 1"));
                 dTable.Columns.Add(new DataColumn("Coluna 2"));
-            
-                /*DataRow dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);*/
 
-                DataRow dr = dTable.NewRow();
-                dr["Coluna 1"] = "\t\tSAIDA";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Via\t\t  :";
-                dr["Coluna 2"] = (btnRegSaida.Enabled ? "1" : "2");
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Cupom\t  :";
-                dr["Coluna 2"] = NumeroCupom(idInicial);
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Placa\t\t  :";
-                dr["Coluna 2"] = txtPlaca.Text;
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Entrada\t  :";
-                dr["Coluna 2"] = _listRegistro[0].data_entrada.ToString("dd/MM/yyyy HH:mm");
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Saida\t\t  :";
-                dr["Coluna 2"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Permanencia:";
-                dr["Coluna 2"] = lbDiarias.Text;
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Cabine\t  :";
-                dr["Coluna 2"] = "SAORAFAEL";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Usuário\t  :";
-                dr["Coluna 2"] = "ADMIN";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Local\t\t  :";
-                dr["Coluna 2"] = "PATIO";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "Tabela\t  :";
-                dr["Coluna 2"] = RetornaTipoValor(_listRegistro[0].tipo);
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "TOTAL\t  :";
-                dr["Coluna 2"] = "R$ " + _valor.ToString() + ",00";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "";
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = _listEmpresa[0].nome;
-                dr["Coluna 2"] = "";
-                dTable.Rows.Add(dr);
-
-                dr = dTable.NewRow();
-                dr["Coluna 1"] = "CNPJ\t  :";
-                dr["Coluna 2"] = _listEmpresa[0].cnpj;
-                dTable.Rows.Add(dr);
-
-                ordGrid.DataSource = dTable.DefaultView;
-                ordGrid.Refresh();   
-                richTextBox1.Text = "";
-
-                float[] tabs = { 30, 60 };
-                _stringFormat.SetTabStops(0, tabs);
-
-                for(int i = 0; i < dTable.Rows.Count; i++)
+                if (_listRegistro.Count > 0)
                 {
-                    for(int j = 0; j < dTable.Columns.Count; j++)
-                    {
-                        richTextBox1.Text += "\t" + dTable.Rows[i][j].ToString() + (j == 0 ? "\t" : "\n");
-                    }
-                }
 
-                richTextBox1.SelectAll();
-                richTextBox1.SelectionTabs = new int[] { 30, 60 };
-                richTextBox1.AcceptsTab = true;
-                richTextBox1.Select(0, 0);
+                    DataRow dr = dTable.NewRow();
+                    dr["Coluna 1"] = "\t\tSAIDA";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Via\t\t  :";
+                    dr["Coluna 2"] = (btnRegSaida.Enabled ? "1" : "2");
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Cupom\t  :";
+                    dr["Coluna 2"] = NumeroCupom(idInicial);
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Placa\t\t  :";
+                    dr["Coluna 2"] = txtPlaca.Text;
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Entrada\t  :";
+                    dr["Coluna 2"] = _listRegistro[0].data_entrada.ToString("dd/MM/yyyy HH:mm");
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Saida\t\t  :";
+                    dr["Coluna 2"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Permanencia:";
+                    dr["Coluna 2"] = lbDiarias.Text;
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Cabine\t  :";
+                    dr["Coluna 2"] = "SAORAFAEL";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Usuário\t  :";
+                    dr["Coluna 2"] = "ADMIN";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Local\t\t  :";
+                    dr["Coluna 2"] = "PATIO";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "Tabela\t  :";
+                    dr["Coluna 2"] = RetornaTipoValor(_listRegistro[0].tipo);
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "TOTAL\t  :";
+                    dr["Coluna 2"] = "R$ " + _valor.ToString() + ",00";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "";
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = _listEmpresa[0].nome;
+                    dr["Coluna 2"] = "";
+                    dTable.Rows.Add(dr);
+
+                    dr = dTable.NewRow();
+                    dr["Coluna 1"] = "CNPJ\t  :";
+                    dr["Coluna 2"] = _listEmpresa[0].cnpj;
+                    dTable.Rows.Add(dr);
+
+                    ordGrid.DataSource = dTable.DefaultView;
+                    ordGrid.Refresh();
+                    richTextBox1.Text = "";
+
+                    float[] tabs = { 30, 60 };
+                    _stringFormat.SetTabStops(0, tabs);
+
+                    for (int i = 0; i < dTable.Rows.Count; i++)
+                    {
+                        for (int j = 0; j < dTable.Columns.Count; j++)
+                        {
+                            richTextBox1.Text += "\t" + dTable.Rows[i][j].ToString() + (j == 0 ? "\t" : "\n");
+                        }
+                    }
+
+                    richTextBox1.SelectAll();
+                    richTextBox1.SelectionTabs = new int[] { 30, 60 };
+                    richTextBox1.AcceptsTab = true;
+                    richTextBox1.Select(0, 0);
+                }
             }
             catch(Exception ex)
             {
@@ -255,8 +256,13 @@ namespace WinFormUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            List<RegistrosModel> list = SqliteDataAccess.CarregaPagamento(txtPlaca.Text);
-            if(list.Count == 0 || (list.Count == 1 && list[0].data_saida != DateTime.MinValue))
+            List<RegistrosModel> list = new List<RegistrosModel>();
+            if (String.IsNullOrEmpty(_id))
+                list = SqliteDataAccess.CarregaPagamentoByPlaca(txtPlaca.Text);
+            else
+                list = SqliteDataAccess.CarregaPagamento(_id); 
+
+            if (list.Count == 0 || (list.Count == 1 && list[0].data_saida != DateTime.MinValue))
             {
                 _listRegistro = list;
                 btnImprimirSegundaVia.Visible = true;
@@ -363,32 +369,32 @@ namespace WinFormUI
 
         private void button1_KeyDown(object sender, KeyEventArgs e)
         {
-            KeyDownCustom(e.KeyCode);
+            //KeyDownCustom(e.KeyCode);
         }
 
         private void button1_KeyPress(object sender, KeyPressEventArgs e)
         {
-            KeyPressCustom(e.KeyChar);
+            //KeyPressCustom(e.KeyChar);
         }
 
         private void txtPlaca_KeyDown_1(object sender, KeyEventArgs e)
         {
-            KeyDownCustom(e.KeyCode);
+            //KeyDownCustom(e.KeyCode);
         }
 
         private void txtPlaca_KeyPress_1(object sender, KeyPressEventArgs e)
         {
-            KeyPressCustom(e.KeyChar);
+            //KeyPressCustom(e.KeyChar);
         }
 
         private void Saida_KeyDown(object sender, KeyEventArgs e)
         {
-            KeyDownCustom(e.KeyCode);
+            //KeyDownCustom(e.KeyCode);
         }
 
         private void Saida_KeyPress(object sender, KeyPressEventArgs e)
         {
-            KeyPressCustom(e.KeyChar);
+            //KeyPressCustom(e.KeyChar);
         }
 
         private void KeyDownCustom(Keys keyCode)
@@ -457,7 +463,11 @@ namespace WinFormUI
         {
             try
             {
-                List<RegistrosModel> list = SqliteDataAccess.CarregaPagamento(txtPlaca.Text);
+                List<RegistrosModel> list = new List<RegistrosModel>();
+                //if (String.IsNullOrEmpty(_id))
+                    list = SqliteDataAccess.CarregaPagamentoByPlaca(txtPlaca.Text);
+                //else
+                    //list = SqliteDataAccess.CarregaPagamento(_id);
 
                 /*if(list.Count == 0)
                 {
@@ -545,12 +555,12 @@ namespace WinFormUI
 
         private void button1_KeyDown_1(object sender, KeyEventArgs e)
         {
-            KeyDownCustom(e.KeyCode);
+            //KeyDownCustom(e.KeyCode);
         }
 
         private void button1_KeyPress_1(object sender, KeyPressEventArgs e)
         {
-            KeyPressCustom(e.KeyChar);
+            //KeyPressCustom(e.KeyChar);
         }
 
         private void txtPlaca_Click(object sender, EventArgs e)

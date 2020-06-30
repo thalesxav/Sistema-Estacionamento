@@ -17,6 +17,7 @@ namespace WinFormUI
         public PeopleForm()
         {
             InitializeComponent();
+            this.KeyPreview = true;
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -42,6 +43,7 @@ namespace WinFormUI
                 orderby t.data_entrada descending  
                 select new  
                 {  
+                    id = t.id,
                     Placa = t.placa,  
                     Entrada = t.data_entrada,  
                     Saída = t.data_saida/*,
@@ -60,22 +62,26 @@ namespace WinFormUI
                 dataGridView1.DefaultCellStyle.Font = new Font("Tahoma", 9);
                 dataGridView1.DataSource = columns.ToList();
 
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                if (columns.ToList().Count > 0)
+                {
+                    dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                    dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+                    dataGridView1.Columns[0].Visible = false;
+                    dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                    dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                    dataGridView1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
 
-                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
-                dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-                dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
-                dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.DisplayedCells;
+                    dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+                    dataGridView1.MultiSelect = false;
 
-                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                dataGridView1.MultiSelect = false;
+                    if (columns.ToList().Count > 1)
+                        dataGridView1_CellClick(dataGridView1, new DataGridViewCellEventArgs(0, linha));
 
-                dataGridView1_CellClick(dataGridView1, new DataGridViewCellEventArgs(0, linha));
-
-                if (dataGridView1.CurrentRow == null)
-                    dataGridView1.CurrentRow.Selected = true;
-                else
-                    dataGridView1.Rows[linha].Selected = true;
+                    if (dataGridView1.CurrentRow != null)
+                        dataGridView1.CurrentRow.Selected = true;
+                    else
+                        dataGridView1.Rows[linha].Selected = true;
+                }
 
                 dataGridView1.Refresh();
                 dataGridView1.EndEdit();
@@ -194,45 +200,47 @@ namespace WinFormUI
             }
             else if (keyCode == Keys.F10)
             {
-                MessageBox.Show("Localizar Placa");
+                panel2.Controls.Clear();
+
+                Localizar entrada = new Localizar();
+                this.Invoke((MethodInvoker)delegate () {
+                    panel2.Controls.Add(entrada);
+                    entrada.Focus();
+                });
             }
         }
 
         private void KeyPressCustom(char keyChar)
         {
-            if (keyChar == (char)113)
+            if (keyChar == (char)113 && keyChar.ToString() == Keys.F2.ToString())
             {
                 btnEntrada.PerformClick();
             }
-            else if (keyChar == (char)114)
+            else if (keyChar == (char)114 && keyChar.ToString() == Keys.F3.ToString())
             {
                 btnSaida.PerformClick();
             }
-            else if (keyChar == (char)121)
+            else if (keyChar == (char)121 && keyChar.ToString() == Keys.F10.ToString())
             {
-                MessageBox.Show("Localizar Placa");
+                panel2.Controls.Clear();
+
+                Localizar entrada = new Localizar();
+                this.Invoke((MethodInvoker)delegate () {
+                    panel2.Controls.Add(entrada);
+                    entrada.Focus();
+                });
             }
-        }
-
-        private void dataGridView1_KeyDown(object sender, KeyEventArgs e)
-        {
-            KeyDownCustom(e.KeyCode);
-        }
-
-        private void dataGridView1_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            KeyPressCustom(e.KeyChar);
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            var placa = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+            var id = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+            var placa = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
             dataGridView1.CurrentRow.Selected = true;
-            //MessageBox.Show(placa);
 
             panel2.Controls.Clear();
 
-            Saida saida = new Saida(ReturnFuncSaida, placa);
+            Saida saida = new Saida(ReturnFuncSaida, id, placa);
             this.Invoke((MethodInvoker)delegate() {
                 panel2.Controls.Add(saida);
                 saida.Focus();
@@ -241,13 +249,14 @@ namespace WinFormUI
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            var placa = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
-            dataGridView1.CurrentRow.Selected = true;
-            //MessageBox.Show(placa);
+            var id = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+            var placa = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+            if(dataGridView1.CurrentRow != null)
+                dataGridView1.CurrentRow.Selected = true;
 
             panel2.Controls.Clear();
 
-            Saida saida = new Saida(ReturnFuncSaida, placa);
+            Saida saida = new Saida(ReturnFuncSaida, id, placa);
             this.Invoke((MethodInvoker)delegate () {
                 panel2.Controls.Add(saida);
                 saida.Focus();
@@ -256,12 +265,12 @@ namespace WinFormUI
 
         private void dataGridView1_KeyDown_1(object sender, KeyEventArgs e)
         {
-            KeyDownCustom(e.KeyCode);
+           //KeyDownCustom(e.KeyCode);
         }
 
         private void dataGridView1_KeyPress_1(object sender, KeyPressEventArgs e)
         {
-            KeyPressCustom(e.KeyChar);
+            //KeyPressCustom(e.KeyChar);
         }
     }
 }
