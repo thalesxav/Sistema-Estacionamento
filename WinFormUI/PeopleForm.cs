@@ -14,8 +14,10 @@ namespace WinFormUI
     public partial class PeopleForm : Form
     {
         private int linha = 0;
+        private Action<string> returnFunc;
+
         public PeopleForm()
-        {
+        {            
             InitializeComponent();
             this.KeyPreview = true;
         }

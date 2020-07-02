@@ -43,6 +43,11 @@ namespace WinFormUI
             }
         }
 
+        protected void ReturnFunc(string tipo)
+        {
+            this.Close();
+        }
+
         private void txtSenha_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)13)

@@ -473,23 +473,29 @@ namespace WinFormUI
 
                 if (list.Count == 0)
                 {
-                    //MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra no pátio!");
-                    //LimparTela();
-                    list = SqliteDataAccess.CarregaPagamentoByPlacaJaSaiu(_id);
-
-                    if (list.Count == 0)
+                    if (String.IsNullOrEmpty(_id))
                     {
-                        btnImprimirSegundaVia.Visible = false;
-                        btnRegSaida.Enabled = true;
-                        _listRegistro = list;
-                        PreencheDaodsSaida();
+                        MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra no pátio!");
+                        LimparTela();
                     }
                     else
                     {
-                        _listRegistro = list;
-                        btnRegSaida.Enabled = false;
-                        btnImprimirSegundaVia.Visible = true;
-                        PreencheDaodsSaida();
+                        list = SqliteDataAccess.CarregaPagamentoByPlacaJaSaiu(_id);
+
+                        if (list.Count > 0)
+                        {
+                            btnImprimirSegundaVia.Visible = false;
+                            btnRegSaida.Enabled = true;
+                            _listRegistro = list;
+                            PreencheDaodsSaida();
+                        }
+                        else
+                        {
+                            //_listRegistro = list;
+                            btnRegSaida.Enabled = false;
+                            btnImprimirSegundaVia.Visible = false;
+                            LimparTela();
+                        }
                     }
                 }
                 else if (list.Count == 1 && list[0].data_saida != DateTime.MinValue)

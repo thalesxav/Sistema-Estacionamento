@@ -233,15 +233,18 @@ namespace WinFormUI
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(!_confirma)
+            if (!_confirma && txtPlaca.Text.Length >= 7)
             {
                 _confirma = true;
                 ConfirmaTipo form = new ConfirmaTipo(cmbTipo.SelectedIndex.ToString(), ReturnFunc);
-                this.Invoke((MethodInvoker)delegate() {
+                this.Invoke((MethodInvoker)delegate ()
+                {
                     form.StartPosition = FormStartPosition.CenterParent;
                     form.ShowDialog();
                 });
             }
+            else if(txtPlaca.Text.Length < 7)
+                MessageBox.Show("Placa inválida!");
         }
 
         protected void ReturnFunc(string tipo)
