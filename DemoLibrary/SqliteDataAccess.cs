@@ -386,5 +386,27 @@ namespace DemoLibrary
                 throw ex;
             }
         }
+
+        public static List<RegistrosModel> CarregaPagamentoByPlacaJaSaiu(string id)
+        {
+            try
+            {
+                var query = "Select * from Registros where id = :id and data_saida is not null";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("id", id);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

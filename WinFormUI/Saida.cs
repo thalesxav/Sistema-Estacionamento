@@ -469,19 +469,28 @@ namespace WinFormUI
                 //else
                     //list = SqliteDataAccess.CarregaPagamento(_id);
 
-                /*if(list.Count == 0)
-                {
-                    MessageBox.Show("Veículo de Placa '"+txtPlaca.Text+"' não se encontra mais no pátio!");
-                }
-                if(list.Count == 1 && list[0].data_saida != DateTime.MinValue)
-                {
-                    MessageBox.Show("Veículo de Placa '"+txtPlaca.Text+"' não se encontra mais no pátio!");
-                }*/
+
 
                 if (list.Count == 0)
                 {
-                    MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra no pátio!");
-                    LimparTela();
+                    //MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra no pátio!");
+                    //LimparTela();
+                    list = SqliteDataAccess.CarregaPagamentoByPlacaJaSaiu(_id);
+
+                    if (list.Count == 0)
+                    {
+                        btnImprimirSegundaVia.Visible = false;
+                        btnRegSaida.Enabled = true;
+                        _listRegistro = list;
+                        PreencheDaodsSaida();
+                    }
+                    else
+                    {
+                        _listRegistro = list;
+                        btnRegSaida.Enabled = false;
+                        btnImprimirSegundaVia.Visible = true;
+                        PreencheDaodsSaida();
+                    }
                 }
                 else if (list.Count == 1 && list[0].data_saida != DateTime.MinValue)
                 {
@@ -521,17 +530,25 @@ namespace WinFormUI
         private void PreencheDaodsSaida()
         {
             lbEntrada.Text = _listRegistro[0].data_entrada.ToString("dd/MM/yyyy HH:mm");
-            lbSaida.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            double horas = 0;
 
-            double dias = (DateTime.Now - _listRegistro[0].data_entrada).TotalDays;
-            int diasInteger = (int)dias;
-            if(diasInteger == 0)
-                diasInteger = 1;
-            _diarias = diasInteger;
-            decimal dec = diasInteger * RetornaValor(_listRegistro[0].tipo);
+            if (_listRegistro[0].data_saida == DateTime.MinValue)
+            {
+                lbSaida.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                horas = (DateTime.Now - _listRegistro[0].data_entrada).TotalHours;
+            }
+            else
+            {
+                lbSaida.Text = _listRegistro[0].data_saida.ToString("dd/MM/yyyy HH:mm");
+                horas = (_listRegistro[0].data_saida - _listRegistro[0].data_entrada).TotalHours;
+            }
+
+            
+            _diarias = Convert.ToInt32(Math.Ceiling(horas / 24));
+            decimal dec = _diarias * RetornaValor(_listRegistro[0].tipo);
             _valor = dec;
 
-            lbDiarias.Text = diasInteger.ToString() + " diaria" + (diasInteger == 1 ? "" : "s");
+            lbDiarias.Text = _diarias.ToString() + " diária" + (_diarias == 1 ? "" : "s");
             lbTotal.Text = "R$ " + dec.ToString();
         }
 
