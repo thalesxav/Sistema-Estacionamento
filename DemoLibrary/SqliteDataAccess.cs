@@ -20,7 +20,7 @@ namespace DemoLibrary
             {
                 using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
                 {
-                    var output = cnn.Query<RegistrosModel>("select * from Registros LIMIT 50", new DynamicParameters());
+                    var output = cnn.Query<RegistrosModel>("select * from Registros LIMIT 150", new DynamicParameters());
                     return output.ToList();
                 }
                 /*RegistrosModel output = new RegistrosModel();
@@ -280,7 +280,7 @@ namespace DemoLibrary
             {
                 using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
                 {
-                    var output = cnn.Query<RegistrosModel>("select id from Registros order by id desc limit 1", new DynamicParameters());
+                    var output = cnn.Query<RegistrosModel>("select * from Registros order by id desc limit 1", new DynamicParameters());
                     return output.ToList();
                 }
             }
@@ -319,6 +319,29 @@ namespace DemoLibrary
                 }
             }
             catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<RegistrosModel> RelatorioPorData(string text, string text2)
+        {
+            try
+            {
+                var query = "Select * from Registros where data_entrada >= :text and data_entrada < :text2";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("text", text);
+                dynamicParameters.Add("text2", text2);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -387,11 +410,33 @@ namespace DemoLibrary
             }
         }
 
-        public static List<RegistrosModel> CarregaPagamentoByPlacaJaSaiu(string id)
+        public static List<RegistrosModel> CarregaPagamentoPorPlacaJaSaiu(string id)
         {
             try
             {
                 var query = "Select * from Registros where id = :id and data_saida is not null";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("id", id);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<RegistrosModel> CarregaPagamentoPorId(string id)
+        {
+            try
+            {
+                var query = "Select * from Registros where id = :id";
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("id", id);
 

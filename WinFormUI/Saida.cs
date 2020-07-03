@@ -25,9 +25,11 @@ namespace WinFormUI
         public bool _confirma = false;
         private string _placa = "";
         private string _id = "";
+        private bool _segundaVia = false;
 
         public Saida()
         {
+            _segundaVia = false;
             InitializeComponent();
             txtPlaca.Size = new System.Drawing.Size(173, 100);
             txtPlaca.Focus();
@@ -36,6 +38,7 @@ namespace WinFormUI
 
         public Saida(FormReturnParams returnFunc)
         {
+            _segundaVia = false;
             InitializeComponent();
             txtPlaca.Size = new System.Drawing.Size(173, 100);
             txtPlaca.Focus();
@@ -46,14 +49,22 @@ namespace WinFormUI
 
         public Saida(FormReturnParams returnFunc, string id, string placa)
         {
+            InitializeComponent();
+            _segundaVia = false;
             this._placa = placa;
             this._id = id;
-            InitializeComponent();
+            _listRegistro = SqliteDataAccess.CarregaPagamentoPorId(id);
             txtPlaca.Size = new System.Drawing.Size(173, 100);
             txtPlaca.Focus();
             CarregaCupom();
             _returnParam = returnFunc;
             txtPlaca.Text = placa;
+            if (_listRegistro[0].data_saida != DateTime.MinValue)
+            {
+                btnImprimirSegundaVia.Visible = true;
+                btnImprimirSegundaVia.Enabled = true;
+                btnRegSaida.Enabled = false;
+            }
         }
 
         private void CarregaCupom()
@@ -105,7 +116,7 @@ namespace WinFormUI
 
                     dr = dTable.NewRow();
                     dr["Coluna 1"] = "Via\t\t  :";
-                    dr["Coluna 2"] = (btnRegSaida.Enabled ? "1" : "2");
+                    dr["Coluna 2"] = (_listRegistro[0].data_saida != DateTime.MinValue ? "2" : "1");
                     dTable.Rows.Add(dr);
 
                     dr = dTable.NewRow();
@@ -221,9 +232,9 @@ namespace WinFormUI
         private object RetornaTipoValor(int tipo)
         {
             if(tipo == 1)
-                return "R$ Tipo 1 - R$ 35,00";
+                return "Tipo 1";
             if(tipo == 2)
-                return "R$ Tipo 2 - R$ 40,00";
+                return "Tipo 2";
 
             return "";
         }
@@ -384,7 +395,7 @@ namespace WinFormUI
 
         private void txtPlaca_KeyPress_1(object sender, KeyPressEventArgs e)
         {
-            //KeyPressCustom(e.KeyChar);
+            KeyPressCustom(e.KeyChar);
         }
 
         private void Saida_KeyDown(object sender, KeyEventArgs e)
@@ -394,7 +405,7 @@ namespace WinFormUI
 
         private void Saida_KeyPress(object sender, KeyPressEventArgs e)
         {
-            //KeyPressCustom(e.KeyChar);
+            KeyPressCustom(e.KeyChar);
         }
 
         private void KeyDownCustom(Keys keyCode)
@@ -480,7 +491,7 @@ namespace WinFormUI
                     }
                     else
                     {
-                        list = SqliteDataAccess.CarregaPagamentoByPlacaJaSaiu(_id);
+                        list = SqliteDataAccess.CarregaPagamentoPorPlacaJaSaiu(_id);
 
                         if (list.Count > 0)
                         {
@@ -530,6 +541,7 @@ namespace WinFormUI
             lbEntrada.Text = "";
             lbSaida.Text = "";
             lbDiarias.Text = "";
+            label7.Text = "";
             lbTotal.Text = "";
         }
 
@@ -548,14 +560,15 @@ namespace WinFormUI
                 lbSaida.Text = _listRegistro[0].data_saida.ToString("dd/MM/yyyy HH:mm");
                 horas = (_listRegistro[0].data_saida - _listRegistro[0].data_entrada).TotalHours;
             }
-
             
             _diarias = Convert.ToInt32(Math.Ceiling(horas / 24));
             decimal dec = _diarias * RetornaValor(_listRegistro[0].tipo);
             _valor = dec;
 
+            label7.Text = (_listRegistro[0].tipo == 1 ? "Tipo 1" : "Tipo 2");
+
             lbDiarias.Text = _diarias.ToString() + " diária" + (_diarias == 1 ? "" : "s");
-            lbTotal.Text = "R$ " + dec.ToString();
+            lbTotal.Text = "R$ " + dec.ToString() + ",00";
         }
 
         private int RetornaValor(int tipo)
@@ -598,6 +611,8 @@ namespace WinFormUI
 
         private void btnImprimirSegundaVia_Click(object sender, EventArgs e)
         {
+            _segundaVia = true;
+            //CarregaCupom();
             PrintDocument pd = new PrintDocument();
             _printFont = new Font("Arial", 10);
             pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);

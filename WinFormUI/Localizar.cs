@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Printing;
 using DemoLibrary;
+using System.Globalization;
 
 namespace WinFormUI
 {
@@ -30,6 +31,7 @@ namespace WinFormUI
             PreencheTiposPagamentos();
             txtPlaca.Size = new System.Drawing.Size(173, 100);
             txtPlaca.Focus();
+            richTextBox1.ScrollBars = RichTextBoxScrollBars.Vertical;
             CarregaCupom();
         }
 
@@ -49,6 +51,8 @@ namespace WinFormUI
 
         private void CarregaCupom()
         {
+            richTextBox1.ScrollBars = RichTextBoxScrollBars.Vertical;
+            richTextBox1.Refresh();
             try
             {
                 //if(_list.Count() == 0)
@@ -56,7 +60,7 @@ namespace WinFormUI
 
 //                int idInicial = 1;
                 
-                _listCupom = SqliteDataAccess.LocalizarPlaca(txtPlaca.Text);
+                
                 
             
                 DataGridTableStyle tableStyle = new DataGridTableStyle();
@@ -116,26 +120,7 @@ namespace WinFormUI
                 throw ex;
             }
         }
-
-        private string NumeroCupom(int id)
-        {
-            string a = id.ToString();;
-            string s = "";
-
-            for(int x = 0; x < (6 - a.Length); x++)
-            {
-                s += "0";
-            }
-
-            a = s+a;
-            return a;
-        }
-
-        private void txtUsuario_MouseClick(object sender, MouseEventArgs e)
-        {
-            if(txtPlaca.Text == "XXX0000")
-                txtPlaca.Text = "";
-        }
+        
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -327,11 +312,13 @@ namespace WinFormUI
 
         private void txtPlaca_TextChanged(object sender, EventArgs e)
         {
+            _listCupom = SqliteDataAccess.LocalizarPlaca(txtPlaca.Text);
             CarregaCupom();
         }
 
         private void cmbTipo_SelectedIndexChanged_1(object sender, EventArgs e)
         {
+            _listCupom = SqliteDataAccess.LocalizarPlaca(txtPlaca.Text);
             CarregaCupom();
         }
 
@@ -348,6 +335,30 @@ namespace WinFormUI
         private void txtPlaca_Click(object sender, EventArgs e)
         {
             //txtPlaca.Text = "";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            DateTime valor;
+            var convertido = DateTime
+                .TryParseExact(textBox1.Text,
+                                "dd/MM/yyyy",
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.None,
+                                out valor);
+
+            if(convertido)
+            {
+                int ano = Convert.ToInt32(textBox1.Text.Substring(6, 4));
+                int mes = Convert.ToInt32(textBox1.Text.Substring(3, 2));
+                int dia = Convert.ToInt32(textBox1.Text.Substring(0, 2));
+                DateTime dt = new DateTime(ano, mes, dia);
+                DateTime dt2 = dt.AddDays(1);
+                string dataFormatada = dt.ToString("yyyy-MM-dd");
+                string dataFormatada2 = dt2.ToString("yyyy-MM-dd");
+                _listCupom = SqliteDataAccess.RelatorioPorData(dataFormatada, dataFormatada2);
+                CarregaCupom();
+            }
         }
     }
 }

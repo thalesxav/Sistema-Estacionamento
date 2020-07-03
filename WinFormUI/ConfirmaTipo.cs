@@ -35,6 +35,11 @@ namespace WinFormUI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (radioButton1.Checked)
+                _tipo = "0";
+            else if (radioButton2.Checked)
+                _tipo = "1";
+            
             returnParam.Invoke(_tipo);
             this.Close();
         }

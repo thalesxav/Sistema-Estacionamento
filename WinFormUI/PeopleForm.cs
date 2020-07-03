@@ -164,7 +164,7 @@ namespace WinFormUI
         {
             if (e.KeyCode == Keys.Enter)
             {
-                MessageBox.Show("Confirma ?");
+                //MessageBox.Show("Confirma ?");
             }
             else
                 KeyDownCustom(e.KeyCode);
@@ -174,7 +174,7 @@ namespace WinFormUI
         {
             if (e.KeyChar == (char)13)
             {
-                MessageBox.Show("Confirma ?");
+                //MessageBox.Show("Confirma ?");
             }
             else
                 KeyPressCustom(e.KeyChar);
@@ -273,6 +273,17 @@ namespace WinFormUI
         private void dataGridView1_KeyPress_1(object sender, KeyPressEventArgs e)
         {
             //KeyPressCustom(e.KeyChar);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            panel2.Controls.Clear();
+
+            Localizar entrada = new Localizar();
+            this.Invoke((MethodInvoker)delegate () {
+                panel2.Controls.Add(entrada);
+                entrada.Focus();
+            });
         }
     }
 }

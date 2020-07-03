@@ -255,7 +255,7 @@ namespace WinFormUI
             RegistrosModel registro = new RegistrosModel();
             registro.placa = txtPlaca.Text;
             //registro.entrada_saida = "1";
-            registro.tipo = cmbTipo.SelectedIndex + 1;
+            registro.tipo = Convert.ToInt32(tipo) + 1;
             registro.data_entrada = DateTime.Now;
             registro.impresso = 0;
 
@@ -363,7 +363,7 @@ namespace WinFormUI
 
         private void txtPlaca_KeyPress_1(object sender, KeyPressEventArgs e)
         {
-           // KeyPressCustom(e.KeyChar);
+            KeyPressCustom(e.KeyChar);
         }
 
         private void Entrada_KeyDown(object sender, KeyEventArgs e)
@@ -373,7 +373,7 @@ namespace WinFormUI
 
         private void Entrada_KeyPress(object sender, KeyPressEventArgs e)
         {
-           // KeyPressCustom(e.KeyChar);
+            KeyPressCustom(e.KeyChar);
         }
 
         private void KeyDownCustom(Keys keyCode)
