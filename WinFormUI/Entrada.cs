@@ -145,7 +145,7 @@ namespace WinFormUI
 
                 dr = dTable.NewRow();
                 dr["Coluna 1"] = "Tabela\t  :";
-                dr["Coluna 2"] = cmbTipo.SelectedItem + ",00";
+                dr["Coluna 2"] = cmbTipo.SelectedItem.ToString().Substring(0, 6);
                 dTable.Rows.Add(dr);
 
                 dr = dTable.NewRow();

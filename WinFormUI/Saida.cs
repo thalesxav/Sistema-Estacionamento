@@ -141,7 +141,7 @@ namespace WinFormUI
 
                     dr = dTable.NewRow();
                     dr["Coluna 1"] = "Saida\t\t  :";
-                    dr["Coluna 2"] = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                    dr["Coluna 2"] = (_listRegistro[0].data_saida == DateTime.MinValue ? DateTime.Now.ToString("dd/MM/yyyy HH:mm") : _listRegistro[0].data_saida.ToString("dd/MM/yyyy HH:mm")) ;
                     dTable.Rows.Add(dr);
 
                     dr = dTable.NewRow();
@@ -278,7 +278,7 @@ namespace WinFormUI
                 _listRegistro = list;
                 btnImprimirSegundaVia.Visible = true;
                 btnRegSaida.Enabled = false;
-                btnRegSaida.ForeColor = Color.Gray;
+                //btnRegSaida.ForeColor = Color.Gray;
                 MessageBox.Show("Veículo de Placa '"+txtPlaca.Text+"' não se encontra mais no pátio!");
             }
 
@@ -474,55 +474,71 @@ namespace WinFormUI
         {
             try
             {
-                List<RegistrosModel> list = new List<RegistrosModel>();
-                //if (String.IsNullOrEmpty(_id))
-                    list = SqliteDataAccess.CarregaPagamentoByPlaca(txtPlaca.Text);
-                //else
-                    //list = SqliteDataAccess.CarregaPagamento(_id);
+                
+
+                if (String.IsNullOrEmpty(_id))
+                    _listRegistro = SqliteDataAccess.CarregaPagamentoByPlaca(txtPlaca.Text);
+                else
+                    _listRegistro = SqliteDataAccess.CarregaPagamento(_id);
+
+                _id = "";
 
 
-
-                if (list.Count == 0)
+                if (_listRegistro.Count == 0)
                 {
-                    if (String.IsNullOrEmpty(_id))
+                    List<RegistrosModel> list = new List<RegistrosModel>();
+                    list = SqliteDataAccess.JaEntrouNoPatio(txtPlaca.Text);
+                    if (list.Count() > 0)
                     {
-                        MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra no pátio!");
-                        LimparTela();
+                        MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra mais no pátio!");
+                        _listRegistro = SqliteDataAccess.CarregaUltimaEntradaByPlaca(txtPlaca.Text);
+                        PreencheDaodsSaida();
+                        LimparTela(true);
                     }
                     else
                     {
-                        list = SqliteDataAccess.CarregaPagamentoPorPlacaJaSaiu(_id);
-
-                        if (list.Count > 0)
-                        {
-                            btnImprimirSegundaVia.Visible = false;
-                            btnRegSaida.Enabled = true;
-                            _listRegistro = list;
-                            PreencheDaodsSaida();
-                        }
-                        else
-                        {
-                            //_listRegistro = list;
-                            btnRegSaida.Enabled = false;
-                            btnImprimirSegundaVia.Visible = false;
-                            LimparTela();
-                        }
+                        MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' nunca esteve no pátio!");
+                        LimparTela(false);
                     }
+                    //if (String.IsNullOrEmpty(_id))
+                    //{
+                    //    MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' não se encontra no pátio!");
+                    //    LimparTela();
+                    //}
+                    //else
+                    //{
+                    //    list = SqliteDataAccess.CarregaPagamentoPorPlacaJaSaiu(_id);
+
+                    //    if (list.Count > 0)
+                    //    {
+                    //        btnImprimirSegundaVia.Visible = false;
+                    //        btnRegSaida.Enabled = true;
+                    //        _listRegistro = list;
+                    //        PreencheDaodsSaida();
+                    //    }
+                    //    else
+                    //    {
+                    //        //_listRegistro = list;
+                    //        btnRegSaida.Enabled = false;
+                    //        btnImprimirSegundaVia.Visible = false;
+                    //        LimparTela();
+                    //    }
+                    //}
                 }
-                else if (list.Count == 1 && list[0].data_saida != DateTime.MinValue)
+                else if (_listRegistro.Count == 1 && _listRegistro[0].data_saida != DateTime.MinValue)
                 {
                     //MessageBox.Show("Veículo de Placa '" + txtPlaca.Text + "' já saiu do pátio!");
-                    _listRegistro = list;
+                    //_listRegistro = list;
                     btnImprimirSegundaVia.Visible = true;
                     btnRegSaida.Enabled = false;
-                    btnRegSaida.ForeColor = Color.Gray;
+                    //btnRegSaida.ForeColor = Color.Gray;
                     PreencheDaodsSaida();
                 }
                 else
                 {
                     btnImprimirSegundaVia.Visible = false;
                     btnRegSaida.Enabled = true;
-                    _listRegistro = list;
+                    //_listRegistro = list;
                     PreencheDaodsSaida();
                 }
             }
@@ -532,17 +548,26 @@ namespace WinFormUI
             }
         }
 
-        private void LimparTela()
+        private void LimparTela(bool jaEntrou)
         {
-            btnImprimirSegundaVia.Enabled = false;
-            btnRegSaida.Enabled = false;
-            btnRegSaida.ForeColor = Color.Gray;
+            if (jaEntrou)
+            {
+                btnImprimirSegundaVia.Enabled = true;
+                btnImprimirSegundaVia.Visible = true;
+                btnRegSaida.Enabled = false;
+            }
+            else
+            {
+                btnImprimirSegundaVia.Enabled = false;
+                btnRegSaida.Enabled = false;
+                //btnRegSaida.ForeColor = Color.Gray;
 
-            lbEntrada.Text = "";
-            lbSaida.Text = "";
-            lbDiarias.Text = "";
-            label7.Text = "";
-            lbTotal.Text = "";
+                lbEntrada.Text = "";
+                lbSaida.Text = "";
+                lbDiarias.Text = "";
+                label7.Text = "";
+                lbTotal.Text = "";
+            }
         }
 
         private void PreencheDaodsSaida()
@@ -569,6 +594,8 @@ namespace WinFormUI
 
             lbDiarias.Text = _diarias.ToString() + " diária" + (_diarias == 1 ? "" : "s");
             lbTotal.Text = "R$ " + dec.ToString() + ",00";
+
+            btnRegSaida.Enabled = true;
         }
 
         private int RetornaValor(int tipo)

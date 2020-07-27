@@ -285,5 +285,35 @@ namespace WinFormUI
                 entrada.Focus();
             });
         }
+
+        private void dataGridView1_CellClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+            var id = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+            var placa = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+            dataGridView1.CurrentRow.Selected = true;
+
+            panel2.Controls.Clear();
+
+            Saida saida = new Saida(ReturnFuncSaida, id, placa);
+            this.Invoke((MethodInvoker)delegate () {
+                panel2.Controls.Add(saida);
+                saida.Focus();
+            });
+        }
+
+        private void dataGridView1_CellDoubleClick_1(object sender, DataGridViewCellEventArgs e)
+        {
+            var id = dataGridView1.Rows[e.RowIndex].Cells[0].Value.ToString();
+            var placa = dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString();
+            dataGridView1.CurrentRow.Selected = true;
+
+            panel2.Controls.Clear();
+
+            Saida saida = new Saida(ReturnFuncSaida, id, placa);
+            this.Invoke((MethodInvoker)delegate () {
+                panel2.Controls.Add(saida);
+                saida.Focus();
+            });
+        }
     }
 }

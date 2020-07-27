@@ -453,5 +453,49 @@ namespace DemoLibrary
                 throw ex;
             }
         }
+
+        public static List<RegistrosModel> JaEntrouNoPatio(string text)
+        {
+            try
+            {
+                var query = "Select * from Registros where placa = :placa order by data_entrada desc limit 1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("placa", text);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static List<RegistrosModel> CarregaUltimaEntradaByPlaca(string text)
+        {
+            try
+            {
+                var query = "Select * from Registros where placa = :placa order by data_entrada desc limit 1";
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("placa", text);
+
+                using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+                {
+                    var output = cnn.Query<RegistrosModel>(query, dynamicParameters);
+                    //if(output.ToList().Count() > 0)
+
+                    return output.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
