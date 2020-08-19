@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Printing;
 using DemoLibrary;
+using System.IO;
 
 namespace WinFormUI
 {
@@ -277,7 +278,37 @@ namespace WinFormUI
                     pd.PrintPage += new PrintPageEventHandler(this.pd_PrintPage);
                     pd.Print();
                     _returnParam.Invoke();
+
+                    Log(registro.id.ToString() + "|" + registro.impresso.ToString() + "|" + registro.placa.ToString() + "|" + registro.tipo.ToString() + "|" + registro.total_pagar.ToString() + "|" + registro.data_entrada.ToString() + "|" + registro.data_saida.ToString(), txtPlaca.Text);
                 }
+            }
+        }
+
+        private void Log(string content, string placa)
+        {
+            try
+            {
+                content += Environment.NewLine + richTextBox1.Text;
+                string subPath = @"C:\temp2"; // your code goes here
+
+                bool exists = System.IO.Directory.Exists(subPath);
+
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(subPath);
+
+                string fileName = @"C:\temp2\" + placa + "_ENTRADA_" + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute + "_" + DateTime.Now.Second + ".txt";
+
+                // Create a new file     
+                using (FileStream fs = File.Create(fileName))
+                {
+                    // Add some text to file    
+                    Byte[] title = new UTF8Encoding(true).GetBytes(content);
+                    fs.Write(title, 0, title.Length);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.ToString());
             }
         }
 

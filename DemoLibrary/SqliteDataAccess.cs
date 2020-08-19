@@ -16,43 +16,50 @@ namespace DemoLibrary
     {
         public static List<RegistrosModel> CarregaUltimasPlacas()
         {
+            List<RegistrosModel> outputList = new List<RegistrosModel>();
             try
             {
                 using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
                 {
-                    var output = cnn.Query<RegistrosModel>("select * from Registros LIMIT 150", new DynamicParameters());
+                    var output = cnn.Query<RegistrosModel>("select * from Registros order by data_entrada desc LIMIT 150");
                     return output.ToList();
                 }
-                /*RegistrosModel output = new RegistrosModel();
-                using (var conn = new System.Data.SQLite.SQLiteConnection(LoadConnectionString()))
-                {
-                    conn.Open();
-                    
-                    using (var comm = new System.Data.SQLite.SQLiteCommand(conn))
-                    {
-                        comm.CommandText = "select * from Registros LIMIT 50";
-                        //var clienteId = comm.ExecuteScalar();
-                        using (var reader = comm.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                output.id = (int)reader["id"];
-                                output.placa = reader["placa"].ToString();
-                                output.tipo = reader["tipo"] != DBNull.Value ? (int)reader["tipo"] : 1;
-                                output.data_entrada = (DateTime)reader["data_entrada"];
-                                output.data_saida = (DateTime)reader["data_saida"];
-                                output.total_pagar = (int)reader["total_pagar"];
-                                output.impresso = (int)reader["impresso"];
-                            }
-                        }
-                    }
-                }*/
-                
+                //RegistrosModel output = new RegistrosModel();
+                //using (var conn = new System.Data.SQLite.SQLiteConnection(LoadConnectionString()))
+                //{
+                //    conn.Open();
+
+                //    using (var comm = new System.Data.SQLite.SQLiteCommand(conn))
+                //    {
+                //        comm.CommandText = "select * from Registros order by data_entrada desc LIMIT 50";
+                //        //var clienteId = comm.ExecuteScalar();
+                //        using (var reader = comm.ExecuteReader())
+                //        {
+                //            while (reader.Read())
+                //            {
+                //                output.id = (int)reader["id"];
+                //                output.placa = reader["placa"].ToString();
+                //                output.tipo = reader["tipo"] != DBNull.Value ? (int)reader["tipo"] : 1;
+                //                output.data_entrada = (DateTime)reader["data_entrada"];
+                //                output.data_saida = (DateTime)reader["data_saida"];
+                //                output.total_pagar = (int)reader["total_pagar"];
+                //                output.impresso = (int)reader["impresso"];
+
+                //                outputList.Add(output);
+                //            }
+                //        }
+                //    }
+
+                //}
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
+            
+            return outputList;
+            
         }
 
         public static List<RegistrosModel> LocalizarPlaca(string text)

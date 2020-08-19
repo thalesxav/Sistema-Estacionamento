@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Printing;
 using DemoLibrary;
+using System.IO;
 
 namespace WinFormUI
 {
@@ -26,6 +27,7 @@ namespace WinFormUI
         private string _placa = "";
         private string _id = "";
         private bool _segundaVia = false;
+        private double _horas;
 
         public Saida()
         {
@@ -149,6 +151,16 @@ namespace WinFormUI
                     dr["Coluna 2"] = lbDiarias.Text;
                     dTable.Rows.Add(dr);
 
+                    if (_horas > 24 && _horas < 26)
+                    {
+                        _diarias = 1;
+
+                        dr = dTable.NewRow();
+                        dr["Coluna 1"] = "Tolerancia:";
+                        dr["Coluna 2"] = "1 hora";
+                        dTable.Rows.Add(dr);
+                    }
+
                     dr = dTable.NewRow();
                     dr["Coluna 1"] = "Cabine\t  :";
                     dr["Coluna 2"] = "SAORAFAEL";
@@ -169,10 +181,6 @@ namespace WinFormUI
                     dr["Coluna 2"] = RetornaTipoValor(_listRegistro[0].tipo);
                     dTable.Rows.Add(dr);
 
-                    dr = dTable.NewRow();
-                    dr["Coluna 1"] = "";
-                    dr["Coluna 2"] = "";
-                    dTable.Rows.Add(dr);
                     dr = dTable.NewRow();
                     dr["Coluna 1"] = "";
                     dr["Coluna 2"] = "";
@@ -265,6 +273,34 @@ namespace WinFormUI
                 txtPlaca.Text = "";
         }
 
+        private void Log(string content, string placa)
+        {
+            try
+            {
+                content += Environment.NewLine + richTextBox1.Text;
+                string subPath = @"C:\temp2"; // your code goes here
+
+                bool exists = System.IO.Directory.Exists(subPath);
+
+                if (!exists)
+                    System.IO.Directory.CreateDirectory(subPath);
+
+                string fileName = @"C:\temp2\"+ placa + "_SAIDA_" + DateTime.Now.Year + "-" + DateTime.Now.Month + "-" + DateTime.Now.Day + "_" + DateTime.Now.Hour + "_" + DateTime.Now.Minute + "_" + DateTime.Now.Second + ".txt";
+
+                // Create a new file     
+                using (FileStream fs = File.Create(fileName))
+                {
+                    // Add some text to file    
+                    Byte[] title = new UTF8Encoding(true).GetBytes(content);
+                    fs.Write(title, 0, title.Length);
+                }
+            }
+            catch (Exception Ex)
+            {
+                Console.WriteLine(Ex.ToString());
+            }
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             List<RegistrosModel> list = new List<RegistrosModel>();
@@ -302,6 +338,8 @@ namespace WinFormUI
                     pd.Print();
                     _confirma = false;
                     _returnParam.Invoke();
+
+                    Log(registro.id.ToString()+ "|" + registro.impresso.ToString() + "|" + registro.placa.ToString() + "|" + registro.tipo.ToString() + "|" + registro.total_pagar.ToString() + "|" + registro.data_entrada.ToString() + "|" + registro.data_saida.ToString(), txtPlaca.Text);
                 }
             }
         }
@@ -466,8 +504,8 @@ namespace WinFormUI
                 CarregaPagamento();
                 CarregaCupom();
             }
-            else
-                CarregaCupom();
+            //else
+                //CarregaCupom();
         }
 
         private void CarregaPagamento()
@@ -573,26 +611,34 @@ namespace WinFormUI
         private void PreencheDaodsSaida()
         {
             lbEntrada.Text = _listRegistro[0].data_entrada.ToString("dd/MM/yyyy HH:mm");
-            double horas = 0;
+            _horas = 0;
 
             if (_listRegistro[0].data_saida == DateTime.MinValue)
             {
                 lbSaida.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-                horas = (DateTime.Now - _listRegistro[0].data_entrada).TotalHours;
+                _horas = (DateTime.Now - _listRegistro[0].data_entrada).TotalHours;
             }
             else
             {
                 lbSaida.Text = _listRegistro[0].data_saida.ToString("dd/MM/yyyy HH:mm");
-                horas = (_listRegistro[0].data_saida - _listRegistro[0].data_entrada).TotalHours;
+                _horas = (_listRegistro[0].data_saida - _listRegistro[0].data_entrada).TotalHours;
             }
-            
-            _diarias = Convert.ToInt32(Math.Ceiling(horas / 24));
+
+            string tolerancia = "";
+            if (_horas > 24 && _horas < 26)
+            {
+                _diarias = 1;
+                //tolerancia = Environment.NewLine + " - Tolerancia: 1 hora";
+            }
+            else
+                _diarias = Convert.ToInt32(Math.Ceiling(_horas / 24));
+
             decimal dec = _diarias * RetornaValor(_listRegistro[0].tipo);
             _valor = dec;
 
             label7.Text = (_listRegistro[0].tipo == 1 ? "Tipo 1" : "Tipo 2");
 
-            lbDiarias.Text = _diarias.ToString() + " diária" + (_diarias == 1 ? "" : "s");
+            lbDiarias.Text = _diarias.ToString() + " diária" + (_diarias == 1 ? "" : "s") + tolerancia;
             lbTotal.Text = "R$ " + dec.ToString() + ",00";
 
             btnRegSaida.Enabled = true;
